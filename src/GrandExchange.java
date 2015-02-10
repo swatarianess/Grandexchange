@@ -30,7 +30,7 @@ public class GrandExchange extends ClientContext {
     private final int GRAND_EXCHANGE = 105;
     private final int BUY_SEARCH_BOX = 389;
     private final int SEARCH_BOX_ITEM_LIST = 4;
-    private final int TRANSACTION_INFO_ID = 198;   //105 -> 198 STRING[]
+    private final int TRANSACTION_INFO_ID = 198;   //Children are 105 -> 198 STRING[]
     private Pattern p = Pattern.compile("(.?)<col=cc9900>(.*)</col><br>for a total price of <col=cc9900>(.*)</col>");
     //Pattern p1 = Pattern.compile("(>([0-9]{1,3},?)+)");
 
@@ -127,8 +127,7 @@ public class GrandExchange extends ClientContext {
     public boolean closeGe(){
         if(isOpen()){
             Component exit = widgets.component(GRAND_EXCHANGE,14);
-            exit.click();
-            Condition.sleep(Random.getDelay());
+            componentClick(exit);
         }
         return true;
     }
@@ -136,13 +135,13 @@ public class GrandExchange extends ClientContext {
     public boolean chooseBuyingItem(String item){
         int infid = -1;
         Component c = widgets.component(GRAND_EXCHANGE,142);
-        Component c1 = widgets.component(GRAND_EXCHANGE,189);
+        @SuppressWarnings("unused")
+		Component c1 = widgets.component(GRAND_EXCHANGE,189); //Not sure what this is used for
         Component[] list = widgets.component(BUY_SEARCH_BOX,SEARCH_BOX_ITEM_LIST).components();
         Component itemResult;
 
         if(!c.text().equalsIgnoreCase(item)){
-            c1.click();
-            Condition.sleep(Random.getDelay());
+        	componentClick(c);
             input.send(item);
             Condition.sleep(Random.getDelay());
             for(int i = 1; i < list.length; i++){
@@ -322,41 +321,24 @@ public class GrandExchange extends ClientContext {
     }
 
     public boolean clickConfirm(){
-        Component c1 = widgets.component(GRAND_EXCHANGE,186);
-        if(c1.valid() && c1.visible()){
-            c1.click();
-            Condition.sleep(Random.getDelay());
-        }
-        return false;
+        Component c = widgets.component(GRAND_EXCHANGE,186);
+        return componentClick(c);
     }
 
     public boolean clickBackButton(){
-        Component c1 = widgets.component(GRAND_EXCHANGE,128);
-        if(c1.valid() && c1.visible()){
-            c1.click();
-            Condition.sleep(Random.getDelay());
-            return true;
-        }
-        Condition.sleep(Random.getDelay());
-        return false;
+        Component c = widgets.component(GRAND_EXCHANGE,128);
+        return componentClick(c);
     }
 
     public boolean sellAll(){
         Component c = widgets.component(GRAND_EXCHANGE,166);
-        if(c.valid() && c.visible()){
-            c.click();
-            return true;
-        }
-        return false;
+        return componentClick(c);
     }
 
     public boolean sellX(String text){
         Component c = widgets.component(GRAND_EXCHANGE,166);
-        if(c.valid() && c.visible()){
-            c.click();
-            Condition.sleep(Random.getDelay());
+        if(componentClick(c)){
             input.send(text + "{VK_ENTER}");
-            Condition.sleep(Random.getDelay());
             return true;
         }
         return false;
@@ -364,22 +346,12 @@ public class GrandExchange extends ClientContext {
 
     public boolean fivePercentDown(){
         Component c = widgets.component(GRAND_EXCHANGE,181);
-        if(c.visible() && c.valid()){
-            c.click();
-            Condition.sleep(Random.getDelay());
-            return true;
-        }
-        return false;
+        return componentClick(c);
     }
 
     public boolean fivePercentUp(){
         Component c = widgets.component(GRAND_EXCHANGE,179);
-        if(c.visible() && c.valid()){
-            c.click();
-            Condition.sleep(Random.getDelay());
-            return true;
-        }
-        return false;
+        return componentClick(c);
     }
 
     public boolean sellUp(Item item, int Quantity, int upButtonNumber, Boolean Members) throws InterruptedException {
@@ -477,6 +449,16 @@ public class GrandExchange extends ClientContext {
         ret[i] = iterator.next();
         }
         return ret;
+    }
+    
+    public boolean componentClick(Component c){
+    	if(c.valid() && c.visible()){
+    		c.click();
+    		Condition.sleep(Random.getDelay());
+    		return true;
+    	}
+    	
+    	return false;
     }
 
 
